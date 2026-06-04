@@ -23,4 +23,4 @@ jobs:
         run: mvn -B clean package
 
       - name: Verify HPI artifact
-        run: test -f target/jenkins-console-cancel-button.hpi
+        run: test -f target/console-cancel-button.hpi
