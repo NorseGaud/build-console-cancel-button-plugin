@@ -1,0 +1,47 @@
+.console-cancel-button-container {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.console-cancel-button {
+  background: #d33833;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 12px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.console-cancel-button:hover:not(:disabled) {
+  background: #b32b27;
+}
+
+.console-cancel-button:disabled {
+  opacity: 0.7;
+  cursor: default;
+}
+
+.console-cancel-button-status {
+  font-size: 13px;
+  background: rgba(0, 0, 0, 0.75);
+  color: #fff;
+  padding: 6px 10px;
+  border-radius: 4px;
+  max-width: 280px;
+}
+
+.console-cancel-button-status:empty {
+  display: none;
+}
+
+.console-cancel-button-status--error {
+  background: #d33833;
+}
