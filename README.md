@@ -5,7 +5,12 @@ pages. The button appears only while the build is running, asks for
 confirmation, and then gracefully aborts the build (the same action as the red
 X in the Jenkins UI).
 
-## Requirements
+![Console Cancel Button](jenkins-console-cancel-button.png)
+
+
+## Development
+
+### Requirements
 
 - **Runtime:** Jenkins 2.426.3 or newer, running on Java 17+.
 - **Build:** JDK **17, 21, or 22** (LTS) and Maven 3.9.6+ (Maven 4 works too).
@@ -14,7 +19,7 @@ Maven must run on one of those JDKs. **Do not use JDK 11** (the HPI plugin will
 ignore `maven.compiler.release=17` and compile as Java 11) or **JDK 24+** (the
 license build step fails with `Unsupported class file major version 70`).
 
-### Set `JAVA_HOME` first
+#### Set `JAVA_HOME` first
 
 macOS (Homebrew OpenJDK 21):
 
@@ -30,7 +35,7 @@ the repo includes `.java-version` (`21`).
 The repo includes `.mvn/maven.config` so Maven 4 can resolve artifacts from
 `repo.jenkins-ci.org` (no extra flags needed).
 
-## Build and test
+### Build and test
 
 **Easiest on macOS:** use `./mvnw` — it picks Homebrew JDK 21 or 17 when `JAVA_HOME`
 is unset (avoids the JDK 11 / JDK 24 failures below).
@@ -67,7 +72,7 @@ Run a single test class:
 mvn -Dtest=CancelButtonPageDecoratorTest test
 ```
 
-### Troubleshooting
+#### Troubleshooting
 
 | Symptom | Likely cause | Fix |
 |--------|----------------|-----|
@@ -80,21 +85,7 @@ The installable plugin is written to `target/console-cancel-button.hpi`. The
 first build downloads the Jenkins parent POM, core, and test harness from
 `repo.jenkins-ci.org` and may take a few minutes.
 
-## Continuous integration
+### Continuous integration
 
 GitHub Actions runs `mvn clean package` on every push and pull request (see
 [`.github/workflows/ci.yml`](.github/workflows/ci.yml)).
-
-## Install
-
-1. In Jenkins: **Manage Jenkins -> Plugins -> Advanced settings -> Deploy Plugin**.
-2. Upload `target/console-cancel-button.hpi`.
-3. Restart Jenkins when prompted.
-
-## How it works
-
-A `PageDecorator` injects a small script into every page footer. The script
-does nothing unless the page URL ends in `/console` or `/consoleFull`. On a
-console page it polls the build's `api/json` for `building` status; while the
-build runs it shows the fixed cancel button. Clicking it POSTs to the build's
-`stop` endpoint with a CSRF crumb.
