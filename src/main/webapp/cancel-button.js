@@ -118,7 +118,10 @@
       })
       .then(function (resp) {
         if (resp.status === 403) {
-          throw new Error("You do not have permission to cancel this build.");
+          throw new Error(
+            "Cancel was rejected (403) - you may lack permission, " +
+              "or the CSRF token could not be obtained."
+          );
         }
         if (!resp.ok) {
           throw new Error("Cancel failed (" + resp.status + ").");
