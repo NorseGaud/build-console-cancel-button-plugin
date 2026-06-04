@@ -12,12 +12,10 @@ X in the Jenkins UI).
 
 ### Requirements
 
-- **Runtime:** Jenkins 2.426.3 or newer, running on Java 17+.
-- **Build:** JDK **17, 21, or 22** (LTS) and Maven 3.9.6+ (Maven 4 works too).
+- **Runtime:** Jenkins 2.528.3 or newer (see `jenkins.baseline` in `pom.xml`).
+- **Build:** JDK **21** (required by the Jenkins plugin parent POM 6.x) and Maven 3.9.6+ (Maven 4 works too).
 
-Maven must run on one of those JDKs. **Do not use JDK 11** (the HPI plugin will
-ignore `maven.compiler.release=17` and compile as Java 11) or **JDK 24+** (the
-license build step fails with `Unsupported class file major version 70`).
+Run Maven on JDK 21. **Do not use JDK 11** or **JDK 24+** for local builds (see troubleshooting).
 
 #### Set `JAVA_HOME` first
 
@@ -26,7 +24,7 @@ macOS (Homebrew OpenJDK 21):
 ```bash
 export JAVA_HOME=/Library/Java/JavaVirtualMachines/openjdk-21.jdk/Contents/Home
 export PATH="$JAVA_HOME/bin:$PATH"
-java -version   # should report 17, 21, or 22
+java -version   # should report 21
 ```
 
 If you use [jenv](https://github.com/jenv/jenv) or [asdf](https://asdf-vm.com/),
@@ -45,7 +43,7 @@ chmod +x mvnw   # once
 ./mvnw clean package
 ```
 
-Or set `JAVA_HOME` yourself (same JDK as [CI](.github/workflows/ci.yml), Temurin 17),
+Or set `JAVA_HOME` yourself (same JDK as [CI](.github/workflows/ci.yml), Temurin 21),
 then run `mvn`:
 
 Full build with tests:
@@ -81,11 +79,27 @@ mvn -Dtest=CancelButtonPageDecoratorTest test
 | `Unable to locate a Java Runtime` | No JDK on `PATH` | Set `JAVA_HOME` and add `$JAVA_HOME/bin` to `PATH` |
 | Tests pass but `BUILD FAILURE` at license step | Wrong JDK for Maven itself, not the compiler flag in `pom.xml` | Verify with `java -version` in the **same shell** as `mvn` |
 
-The installable plugin is written to `target/console-cancel-button.hpi`. The
+The installable plugin is written to `target/jenkins-console-cancel-button.hpi`. The
 first build downloads the Jenkins parent POM, core, and test harness from
 `repo.jenkins-ci.org` and may take a few minutes.
 
 ### Continuous integration
 
-GitHub Actions runs `mvn clean package` on every push and pull request (see
-[`.github/workflows/ci.yml`](.github/workflows/ci.yml)).
+- GitHub Actions runs `mvn clean package` on every push and pull request (see
+  [`.github/workflows/ci.yml`](.github/workflows/ci.yml)).
+- [ci.jenkins.io](https://ci.jenkins.io/) builds via [`Jenkinsfile`](Jenkinsfile) after the plugin is hosted under `jenkinsci`.
+
+## Install
+
+1. Install from the Jenkins plugin catalog (after hosting), or upload a built `.hpi`.
+2. In Jenkins: **Manage Jenkins → Plugins → Advanced settings → Deploy Plugin**.
+3. Upload `target/jenkins-console-cancel-button.hpi`.
+4. Restart Jenkins when prompted.
+
+## How it works
+
+A `PageDecorator` injects a small script into every page footer. The script
+does nothing unless the page URL ends in `/console` or `/consoleFull`. On a
+console page it polls the build's `api/json` for `building` status; while the
+build runs it shows the fixed cancel button. Clicking it POSTs to the build's
+`stop` endpoint with a CSRF crumb.
