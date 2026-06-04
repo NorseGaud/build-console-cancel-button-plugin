@@ -38,9 +38,11 @@ A single server-side extension — a `hudson.model.PageDecorator` — is the onl
 Jenkins hook used. Jenkins renders a `PageDecorator`'s `footer.jelly` immediately
 before `</body>` on every page. We use that hook to inject:
 
-1. A small inline config block (rendered server-side) exposing values the client
-   JS cannot safely derive on its own: the Jenkins root URL (so context paths
-   work) and the CSRF crumb field name + value.
+1. A small hidden config element (rendered server-side) exposing the Jenkins
+   root URL (so context paths work) via a `data-root-url` attribute. The CSRF
+   crumb is NOT rendered server-side; the client fetches a fresh crumb from
+   `crumbIssuer/api/json` at click time (avoids stale crumbs in cached markup,
+   and degrades gracefully when CSRF is disabled).
 2. A `<script>` (and `<link>` for CSS) pointing at static plugin resources.
 
 All decision logic lives client-side. The decorator runs on every page, but the
@@ -69,11 +71,11 @@ Static resources under `src/main/webapp/` are served at
 
 ### footer.jelly responsibilities
 
-- Emit an inline script defining a config object with:
-  - `rootURL` (from Jelly `${rootURL}`)
-  - `crumbField` and `crumbValue` (from `app.crumbIssuer`), wrapped in a guard so
-    they are omitted when CSRF protection is disabled.
-- Load `cancel-button.css` and `cancel-button.js` from plugin resources.
+- Emit a hidden config element exposing the Jenkins root URL via
+  `data-root-url="${rootURL}"` (the client uses it to build the non-static
+  `crumbIssuer` URL).
+- Load `cancel-button.css` and `cancel-button.js` from plugin resources using
+  `${resURL}` (cache-busting across plugin upgrades), with explicit closing tags.
 
 ## Data Flow
 
@@ -83,8 +85,10 @@ Static resources under `src/main/webapp/` are served at
    segment from the path. This naturally handles double-encoded multibranch URLs
    (e.g. `release%252F3.9`) because no manual decode/re-encode is performed.
 3. Poll `GET <buildUrl>api/json?tree=building` on an interval (~3s).
-4. While `building == true`, ensure the fixed cancel button is shown. When it
-   becomes `false`, remove the button and stop polling.
+4. While `building == true`, ensure the fixed cancel button is shown and
+   schedule the next poll. When it becomes `false`, remove the button and stop
+   polling. (Transient fetch failures keep the last known state and keep
+   polling.)
 5. On click: show a `confirm()` dialog. If confirmed, `POST <buildUrl>stop` with
    the crumb header (when available). Show a transient "Cancelling…" state on
    success; show an inline error on failure.
