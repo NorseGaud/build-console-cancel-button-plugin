@@ -1,0 +1,4 @@
+<?jelly escape-by-default='true'?>
+<div>
+    Adds a fixed Cancel button to build console pages so a running build can be aborted in one click.
+</div>
