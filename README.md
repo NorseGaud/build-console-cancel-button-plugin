@@ -1,6 +1,6 @@
-# Console Cancel Button (Jenkins plugin)
+# Build Console Cancel Button (Jenkins plugin)
 
-Repository: [https://github.com/NorseGaud/jenkins-console-cancel-button-plugin](https://github.com/NorseGaud/jenkins-console-cancel-button-plugin)
+Repository: [https://github.com/NorseGaud/build-console-cancel-button-plugin](https://github.com/NorseGaud/build-console-cancel-button-plugin)
 
 Adds a fixed **Cancel build** button to the bottom-right of build *console*
 pages. The button appears only while the build is running, asks for
@@ -81,7 +81,7 @@ mvn -Dtest=CancelButtonPageDecoratorTest test
 | `Unable to locate a Java Runtime` | No JDK on `PATH` | Set `JAVA_HOME` and add `$JAVA_HOME/bin` to `PATH` |
 | Tests pass but `BUILD FAILURE` at license step | Wrong JDK for Maven itself, not the compiler flag in `pom.xml` | Verify with `java -version` in the **same shell** as `mvn` |
 
-The installable plugin is written to `target/jenkins-console-cancel-button.hpi`. The
+The installable plugin is written to `target/build-console-cancel-button.hpi`. The
 first build downloads the Jenkins parent POM, core, and test harness from
 `repo.jenkins-ci.org` and may take a few minutes.
 
@@ -95,7 +95,7 @@ first build downloads the Jenkins parent POM, core, and test harness from
 
 1. Install from the Jenkins plugin catalog (after hosting), or upload a built `.hpi`.
 2. In Jenkins: **Manage Jenkins → Plugins → Advanced settings → Deploy Plugin**.
-3. Upload `target/jenkins-console-cancel-button.hpi`.
+3. Upload `target/build-console-cancel-button.hpi`.
 4. Restart Jenkins when prompted.
 
 ## How it works
