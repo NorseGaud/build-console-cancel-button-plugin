@@ -18,7 +18,7 @@
 
   <name>Console Cancel Button</name>
   <description>Adds a fixed Cancel button to build console pages so a running build can be aborted in one click.</description>
-  <url>https://github.com/jenkinsci/${project.artifactId}-plugin</url>
+  <url>https://github.com/${gitHubRepo}</url>
 
   <licenses>
     <license>
@@ -39,7 +39,8 @@
     <!-- https://www.jenkins.io/doc/developer/plugin-development/choosing-jenkins-baseline/ -->
     <jenkins.baseline>2.528</jenkins.baseline>
     <jenkins.version>${jenkins.baseline}.3</jenkins.version>
-    <gitHubRepo>jenkinsci/${project.artifactId}-plugin</gitHubRepo>
+    <!-- After jenkinsci hosting, change to jenkinsci/jenkins-console-cancel-button-plugin -->
+    <gitHubRepo>NorseGaud/jenkins-console-cancel-button-plugin</gitHubRepo>
     <hpi.strictBundledArtifacts>true</hpi.strictBundledArtifacts>
     <ban-deprecated-stapler.skip>false</ban-deprecated-stapler.skip>
     <ban-commons-lang-2.skip>false</ban-commons-lang-2.skip>

@@ -1,5 +1,7 @@
 # Console Cancel Button (Jenkins plugin)
 
+Repository: [https://github.com/NorseGaud/jenkins-console-cancel-button-plugin](https://github.com/NorseGaud/jenkins-console-cancel-button-plugin)
+
 Adds a fixed **Cancel build** button to the bottom-right of build *console*
 pages. The button appears only while the build is running, asks for
 confirmation, and then gracefully aborts the build (the same action as the red
